@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mavenwebapp-deploy-pod
+  labels:
+    app: mavenwebapp
+  namespace: test-ns
+spec:
+  revisionHistoryLimit: 2
+  minReadySeconds: 30
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mavenweb-app
+  template:
+     metadata:
+       name: mavenwebapp-pod
+       labels:
+         app: mavenweb-app
+     spec:
+        containers:
+          - name: mavenweb-container
+            image: dockerhandson/maven-web-application:2
+            ports:
+              - containerPort: 8080
+            resources:
+              requests:
+                cpu: 200m
+                memory: 250Mi
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: 
+ name: hpa-maven-app
+ namespace: test-ns
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mavenwebapp-deploy-pod
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 20
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 85
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mavenwebapp-service
+  labels:
+    test: service
+  namespace: test-ns
+spec:
+  type: NodePort
+  selector:
+    app: mavenweb-app
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080

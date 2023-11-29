@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: javawebapp
+  labels:
+    app: javawebapp
+spec:
+  containers:
+  - name: javawebapp
+    image: dockerhandson/java-web-app:1
+    ports:
+    - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: javasvc
+  labels:
+    test: javaservice
+spec:
+  selector:
+    app: javawebapp
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 8080
+      nodePort: 30081
