@@ -1,0 +1,11 @@
+.kube
+.ssh
+.vim
+.viminfo
+.sudo_as_admin_successful
+.profile
+.cache
+.bashrc
+.bash_logout
+.bash_history
+.lesshst
