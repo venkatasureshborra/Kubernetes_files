@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata: 
+  name: resourcequota-demo
+  namespace: test-ns
+spec:
+  hard:
+    requests.cpu: "1"
+    requests.memory: 500Mi
+    limits.cpu: "2"
+    limits.memory: 1Gi
+    pods: 3

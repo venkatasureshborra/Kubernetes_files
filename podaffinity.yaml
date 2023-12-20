@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: podaffinity-node
+  labels: 
+    type: Affinity
+  namespace: test-ns
+spec:
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: node
+            operator: In
+            values:
+            - node-two
+        topologyKey: "kubernetes.io/hostname"
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 10
+        podAffinityTerm:
+          labelSelector:
+             matchExpressions:
+             - key: node
+               operator: In
+               values:
+                 - node-two
+          topologyKey: "kubernetes.io/hostname"
+     
+  containers:
+   - name: nginx-pod-affinity
+     image: nginx
+     ports:
+       - containerPort: 80
+
+
+---
+# podAntiAffinity opposite to matched pod labels
+apiVersion: v1
+kind: Pod
+metadata:
+  name: podantiffinity-node
+  labels:
+    type: Anti-Affinity
+  namespace: test-ns
+spec:
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 10
+        podAffinityTerm:
+          labelSelector:
+             matchExpressions:
+             - key: node
+               operator: In
+               values:
+                 - node-two
+          topologyKey: "kubernetes.io/hostname"
+
+  containers:
+   - name: nginx-pod-affinity
+     image: nginx
+     ports:
+       - containerPort: 80

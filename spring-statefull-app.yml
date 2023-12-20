@@ -31,10 +31,22 @@ spec:
         env:
         - name: MONGO_DB_HOSTNAME
           value: mongosvc
+          #valueFrom:
+          # secretKeyRef:
+          #   name: springapp-secret
+          #   key: hostname
         - name: MONGO_DB_USERNAME
           value: dbuser
+          #        valueFrom:
+          #  secretKeyRef:
+          #   name: springapp-secret
+          #   key: username
         - name: MONGO_DB_PASSWORD
           value: db@123
+          #valueFrom:
+          # secretKeyRef:
+          #   name: springapp-secret
+          #   key: password
 ---
 apiVersion: v1
 kind: Service

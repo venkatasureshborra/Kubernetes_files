@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb-statefullset
+  labels:
+    db: mongodb
+  namespace: test-ns
+spec:
+  selector:
+    matchLabels:
+      app: database
+  replicas: 2
+  serviceName: mongodb-hsvc
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mongodb-pod
+        image: mongo
+        command:
+          - "mongod"
+          - "--replSet"
+          - "MainRepSet"
+          - "--bind_ip"
+          - "0.0.0.0"
+        ports:
+        - containerPort: 27071
+  volumeClaimTemplates:
+  - metadata:
+      name: mongopvc
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi

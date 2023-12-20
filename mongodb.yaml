@@ -16,16 +16,46 @@ spec:
       labels:
         app: mongo
     spec:
+      terminationGracePeriodSeconds: 5
       containers:
       - name: mongodb-container
         image: mongo
         ports:
           - containerPort: 27017
-        env: 
+        env:
         - name: MONGO_INITDB_ROOT_USERNAME
-          value: dbuser
+          valueFrom:
+             secretKeyRef:
+               name: secret-data
+               key: username
         - name: MONGO_INITDB_ROOT_PASSWORD
-          value: db@123
+          valueFrom:
+             secretKeyRef:
+               name: secret-data
+               key: password
+        readinessProbe: 
+          tcpSocket:
+            port: 27017
+          initialDelaySeconds: 20
+
+   # this is from directly envornment variable file  config map
+   #     envFrom:
+   #     - configMapRef:
+   #    name: mongodb-env
+   #
+   #    this is  from key reference
+            #env: 
+            #- name: MONGO_INITDB_ROOT_USERNAME
+            #valueFrom:
+            #configMapKeyRef:
+            # name: mongodb-env
+            # key: MONGO_INITDB_ROOT_USERNAME
+
+            #- name: MONGO_INITDB_ROOT_PASSWORD
+            #valueFrom:
+            #configMapKeyRef:
+            # name: mongodb-env
+            # key: MONGO_INITDB_ROOT_PASSWORD
         volumeMounts:
         - mountPath: /data/db
           name: test-vol
@@ -66,3 +96,25 @@ spec:
   ports:
     - port: 27017
       targetPort: 27017
+---
+# network polices only accessed by the spring app
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+ name: mongodb-netpol
+ namespace: test-ns
+spec:
+  podSelector:
+    matchLabels:
+       app: mongo
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: spring-app-pod
+      ports:
+        - protocol: TCP
+          port: 27017
+

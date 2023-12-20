@@ -4,7 +4,6 @@ metadata:
   name: python-pod
   labels:
     app: python
-  namespace: test-ns
 spec:
   containers:
     - name: python-container
@@ -20,7 +19,6 @@ metadata:
   name: python-service
   labels:
     test: service
-  namespace: test-ns
 spec:
   type: NodePort
   selector:

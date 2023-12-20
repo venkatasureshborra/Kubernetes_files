@@ -29,7 +29,23 @@ spec:
               requests:
                 cpu: 200m
                 memory: 250Mi
-
+              limits:
+                cpu: 400m
+                memory: 500Mi
+            livenessProbe:
+              httpGet:
+                path: /maven-web-application
+                port: 8080
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              timeoutSeconds: 40
+            readinessProbe:
+              httpGet:
+                path: /maven-web-application
+                port: 8080
+              initialDelaySeconds: 10
+              periodSeconds: 10
+        terminationGracePeriodSeconds: 10
 ---
 
 apiVersion: v1

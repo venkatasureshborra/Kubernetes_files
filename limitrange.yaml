@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: default-limit-range
+  namespace: test-ns
+spec:
+  limits:
+  - default:
+      memory: 500Mi
+      cpu: 500m
+    defaultRequest:
+      memory: 250Mi
+      cpu: 200m
+    type: Container

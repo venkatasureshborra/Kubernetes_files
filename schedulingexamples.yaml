@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: nginx-nodeone-selector
+  namespace: test-ns
+  labels:
+    name: node-one
+spec:
+  tolerations:
+  - key: name 
+    operator: Exists
+    effect: NoExecute
+  - key: name
+    operator: Exists
+    effect: NoSchedule
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: name
+            operator: In
+            values:
+            - nodeone
+  containers:
+  - name: nginx-pod
+    image: nginx
+    ports:
+      - containerPort: 80
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-nodetwo-selector
+  namespace: test-ns
+  labels:
+    node: node-two
+spec:
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 5
+          preference:
+            matchExpressions:
+            - key: name
+              operator: In
+              values:
+              - nodeone
+  containers:
+  - name: nginx-pod
+    image: nginx
+    ports:
+      - containerPort: 80
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-nodename-pod-183
+  namespace: test-ns
+  labels:
+    node: node-two
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: name
+            operator: In
+            values:
+            - nodeone
+  containers:
+  - name: nginx-pod
+    image: nginx
+    ports:
+      - containerPort: 80
+

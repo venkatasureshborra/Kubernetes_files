@@ -12,19 +12,26 @@ spec:
     ports:
       - containerPort: 8080
     volumeMounts:
-      - name: tomcat-map
+      - name: tomcat-user-xml
         mountPath: /usr/local/tomcat/conf/tomcat-users.xml
         subPath: tomcat-users.xml
-      - name: manager-context
+      - name: tomcat-context-xml
         mountPath: /usr/local/tomcat/webapps/manager/META-INF/
   volumes:
-  - name: tomcat-map
+  - name: tomcat-user-xml
     configMap:
       name: tomcat-cm
-  - name: manager-context-vol
-    configMap: 
-      name: manager-context
----
+      items:
+      - key: "tomcat-users.xml"
+        path: "tomcat-users.xml"
+  - name: tomcat-context-xml
+    configMap:
+      name: tomcat-cm
+      items:
+      - key: "context.xml"
+        path: "context.xml"
+
+--- 
 
 apiVersion: v1
 kind: Service
@@ -38,4 +45,4 @@ spec:
   ports:
     - port: 80
       targetPort: 8080
-
+      nodePort: 30080

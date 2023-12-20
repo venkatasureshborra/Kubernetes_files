@@ -1,0 +1,14 @@
+# Headless Service used by statefullSet Applications
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-hsvc
+  namespace: test-ns
+spec:
+  selector:
+    app: database
+  clusterIP: None
+  ports:
+    - port: 27017
+      targetPort: 27017
+
